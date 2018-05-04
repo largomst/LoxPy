@@ -2,29 +2,30 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    # Single - character
-    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE = [auto()] * 4
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR = [auto()] * 7
+    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE = [auto() for i in range(4)]
+    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR = [auto() for i in range(7)]
 
     # One or two character tokens.
-    BANG, BANG_EQUAL = [auto()] * 2
-    EQUAL, EQUAL_EQUAL = [auto()] * 2
-    GREATER, GREATER_EQUAL = [auto()] * 2
-    LESS, LESS_EQUAL, = [auto()] * 2
+    BANG, BANG_EQUAL = [auto() for i in range(2)]
+    EQUAL, EQUAL_EQUAL = [auto() for i in range(2)]
+    GREATER, GREATER_EQUAL = [auto() for i in range(2)]
+    LESS, LESS_EQUAL, = [auto() for i in range(2)]
 
     # Literals.
-    IDENTIFIER, STRING, NUMBER, = [auto()] * 3
+    IDENTIFIER, STRING, NUMBER, = [auto() for i in range(3)]
 
     # Keywords.
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, = [auto()] * 9
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, = [auto()] * 7
+    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, = [auto() for i in range(9)]
+    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, = [auto() for i in range(7)]
 
     EOF = auto()
+
+    # REVIEW: 这里犯了一个非常打的错误，[auto()] 产生不能区分数值的列表，导致标识符完全无法区分
 
 
 class Token:
 
-    def __init__(self, type: TokenType, lexeme: str, literal: "Object", line: int):
+    def __init__(self, type: TokenType, lexeme: str, literal: object, line: int):
         self.type, self.lexeme, self.literal, self.line = type, lexeme, literal, line
 
     def __str__(self):

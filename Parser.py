@@ -1,12 +1,8 @@
-from typing import List, Type
+from typing import List
 
-import Lox
 from Expr import *
+from ParserError import error, ParseError
 from Tokens import TokenType, Token
-
-
-class ParseError(Exception):
-    pass
 
 
 class Parser:
@@ -85,7 +81,7 @@ class Parser:
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression")
             return Grouping(expr)
 
-        self.error(self.peek(), "Except expression.")
+        raise error(self.peek(), "Except expression.")
 
     # infrastructure primitive operation
     def match(self, *types: TokenType) -> bool:
@@ -102,7 +98,7 @@ class Parser:
         if self.check(type):
             return self.advance()
         else:
-            raise self.error(self.peek(), message)
+            raise error(self.peek(), message)
 
     def check(self, tokenType: TokenType) -> bool:
         if self.isAtEnd(): return False  # REVIEW: 注意此处是否定
@@ -120,14 +116,6 @@ class Parser:
 
     def previous(self) -> Token:
         return self.tokens[self.current - 1]
-
-    # REVIEW: 这里没有将 error 写到 Lox 中，并在这里导入了 Lox.report
-    def error(self, token: Token, message: str) -> Type[ParseError]:
-        if token.type == TokenType.EOF:
-            Lox.report(token.line, " at end", message)
-        else:
-            Lox.report(token.line, " at '" + token.lexeme + "'", message)
-        return ParseError
 
     def sychronize(self) -> None:
         self.advance()
@@ -149,5 +137,5 @@ class Parser:
     def parse(self):
         try:
             return self.expression()
-        except ParseError:
+        except ParseError as error:
             return None

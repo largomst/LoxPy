@@ -1,6 +1,6 @@
 import Expr
 from Tokens import TokenType, Token
-from LoxRuntimeError import LoxRuntimeError
+from LoxRuntimeError import LoxRuntimeError, runtimeError
 
 
 class Interpreter(Expr.ExprVisitor):
@@ -59,7 +59,7 @@ class Interpreter(Expr.ExprVisitor):
                 return float(left) + float(right)  # 数学运算
             if isinstance(left, str) and isinstance(right, str):
                 return str(left) + str(right)  # 连接字符串
-            LoxRuntimeError(expr.operator, "Operator adds must be two number or two string.")
+            raise LoxRuntimeError(expr.operator, "Operator adds must be two number or two string.")
         elif optype == TokenType.SLASH:
             self.checkNumberOperand(expr.operator, left, right)
             return float(left) / float(right)
@@ -86,3 +86,20 @@ class Interpreter(Expr.ExprVisitor):
         if a is None: return False
 
         return a.__eq__(b)
+
+    def stringify(self, obj: object):
+        if obj == None: return 'nil'
+
+        if isinstance(obj, float):
+            text = str(obj)
+            if text.endswith('.0'):
+                return text[0:len(text) - 2]  # REVIEW: 不要误用 rstrip，会导致末尾的 0 丢失
+
+        return str(obj)
+
+    def interpreter(self, expression: Expr):
+        try:
+            value = self.evaluate(expression)
+            print(self.stringify(value))
+        except LoxRuntimeError as error:
+            runtimeError(error)
