@@ -13,8 +13,13 @@ def main():
     defineAst(outputDir, "Expr", [
         "Binary   : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
-        "Literal  : Object value",
+        "Literal  : object value",
         "Unary    : Token operator, Expr right"
+    ])
+
+    defineAst(outputDir, "Stmt", [
+        "Expression : Expr expression",
+        "Print      : Expr expression"
     ])
 
 
@@ -33,7 +38,7 @@ def defineAst(outputDir: str, baseName: str, types: List[str]):
             k, v = k.strip(), v.strip()
             fieldsDict[k] = v
         typesDict[typeName] = fieldsDict
-    template = Template("""from lox import Token
+    template = Template("""from Tokens import Token
 
 __all__ = [
     "{{baseName}}Visitor",
@@ -41,14 +46,12 @@ __all__ = [
     "{{typeName}}",{% endfor %}
 ]
 
-
-class {{baseName}}:
-    def accept(self, visitor: {{baseName}}Visitor): raise NotImplementedError
-
-
 class {{baseName}}Visitor:{% for typeName,fields in typesDict.items() %}
     def visit{{typeName}}(self, {{baseName|lower}}: "{{typeName}}"): raise NotImplementedError
 {% endfor %}
+
+class {{baseName}}:
+    def accept(self, visitor: {{baseName}}Visitor): raise NotImplementedError
 
 {# 这相当于建立符号表的 ref 阶段 #}
 {% for typeName, fields in typesDict.items() %}

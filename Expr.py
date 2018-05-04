@@ -9,11 +9,6 @@ __all__ = [
     "Unary",
 ]
 
-
-class Expr:
-    def accept(self, visitor): raise NotImplementedError
-
-
 class ExprVisitor:
     def visitBinary(self, expr: "Binary"): raise NotImplementedError
 
@@ -22,6 +17,11 @@ class ExprVisitor:
     def visitLiteral(self, expr: "Literal"): raise NotImplementedError
 
     def visitUnary(self, expr: "Unary"): raise NotImplementedError
+
+
+class Expr:
+    def accept(self, visitor: ExprVisitor): raise NotImplementedError
+
 
 
 class Binary(Expr):
@@ -61,3 +61,6 @@ class Unary(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visitUnary(self)
+
+
+    
