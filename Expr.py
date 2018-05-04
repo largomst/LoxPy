@@ -46,7 +46,7 @@ class Grouping(Expr):
 
 class Literal(Expr):
 
-    def __init__(self, value: "Object"):
+    def __init__(self, value: object):
         self.value = value
 
     def accept(self, visitor: ExprVisitor):
