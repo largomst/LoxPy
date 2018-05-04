@@ -1,5 +1,6 @@
 import Expr
-from Tokens import TokenType
+from Tokens import TokenType, Token
+from LoxRuntimeError import LoxRuntimeError
 
 
 class Interpreter(Expr.ExprVisitor):
@@ -10,12 +11,22 @@ class Interpreter(Expr.ExprVisitor):
         right = self.evaluate(expr.right)
 
         if expr.operator.type == TokenType.MINUS:
+            self.checkNumberOperand(expr.operator, right)
             return -float(right)
         elif expr.operator == TokenType.BANG:
             return not self.isTruthy(right)
 
         # Unreachable
         return None
+
+    # REVIEW: 这里用默认参数来替代实现 Java 的 Overloading，看起来不太漂亮
+    def checkNumberOperand(self, operator: Token, left: object, right: object = None):
+        if right is None:
+            if isinstance(left, float): return
+            raise LoxRuntimeError(operator, "Operand must be number")
+        else:
+            if isinstance(left, float) and isinstance(right, float): return
+            raise LoxRuntimeError(operator, "Operator must be number.")
 
     def visitGrouping(self, expr: Expr.Grouping) -> object:
         return self.evaluate(expr.expression)
@@ -30,12 +41,16 @@ class Interpreter(Expr.ExprVisitor):
         elif optype == TokenType.EQUAL_EQUAL:
             return self.isEqual(left, right)
         elif optype == TokenType.GREATER:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) > float(right)
         elif optype == TokenType.GREATER_EQUAL:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) >= float(right)
         elif optype == TokenType.LESS:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) < float(right)
         elif optype == TokenType.LESS_EQUAL:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) <= float(right)
         elif optype == TokenType.MINUS:
             return float(left) - float(right)
@@ -44,9 +59,12 @@ class Interpreter(Expr.ExprVisitor):
                 return float(left) + float(right)  # 数学运算
             if isinstance(left, str) and isinstance(right, str):
                 return str(left) + str(right)  # 连接字符串
+            LoxRuntimeError(expr.operator, "Operator adds must be two number or two string.")
         elif optype == TokenType.SLASH:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) / float(right)
         elif optype == TokenType.STAR:
+            self.checkNumberOperand(expr.operator, left, right)
             return float(left) * float(right)
 
         # Unreachable
