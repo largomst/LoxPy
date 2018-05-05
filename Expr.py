@@ -1,4 +1,5 @@
 from Tokens import Token
+from typing import List
 
 __all__ = [
     "ExprVisitor",

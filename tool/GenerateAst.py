@@ -21,9 +21,10 @@ def main():
 
     defineAst(outputDir, "Stmt", [
         "Block    : List[Stmt] statements",
-        "Expression : Expr expression",
-        "Print      : Expr expression",
-        "Var        : Token name, Expr initializer"
+        "If         : 'Expr' condition, Stmt thenBranch, Stmt elseBranch",
+        "Expression : 'Expr' expression",
+        "Print      : 'Expr' expression",
+        "Var        : Token name, 'Expr' initializer"
     ])
 
 
@@ -43,6 +44,7 @@ def defineAst(outputDir: str, baseName: str, types: List[str]):
             fieldsDict[k] = v
         typesDict[typeName] = fieldsDict
     template = Template("""from Tokens import Token
+from typing import List
 
 __all__ = [
     "{{baseName}}Visitor",

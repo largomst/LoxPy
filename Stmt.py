@@ -1,12 +1,11 @@
-from typing import List
-
-from Expr import Expr
 from Tokens import Token
+from typing import List
 
 __all__ = [
     "StmtVisitor",
     "Stmt",
     "Block",
+    "If",
     "Expression",
     "Print",
     "Var",
@@ -14,6 +13,8 @@ __all__ = [
 
 class StmtVisitor:
     def visitBlockStmt(self, stmt: "Block"): raise NotImplementedError
+
+    def visitIfStmt(self, stmt: "If"): raise NotImplementedError
 
     def visitExpressionStmt(self, stmt: "Expression"): raise NotImplementedError
 
@@ -36,9 +37,20 @@ class Block(Stmt):
         return visitor.visitBlockStmt(self)
 
 
+class If(Stmt):
+
+    def __init__(self, condition: 'Expr', thenBranch: Stmt, elseBranch: Stmt):
+        self.condition = condition
+        self.thenBranch = thenBranch
+        self.elseBranch = elseBranch
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitIfStmt(self)
+
+
 class Expression(Stmt):
 
-    def __init__(self, expression: Expr):
+    def __init__(self, expression: 'Expr'):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor):
@@ -47,7 +59,7 @@ class Expression(Stmt):
 
 class Print(Stmt):
 
-    def __init__(self, expression: Expr):
+    def __init__(self, expression: 'Expr'):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor):
@@ -56,7 +68,7 @@ class Print(Stmt):
 
 class Var(Stmt):
 
-    def __init__(self, name: Token, initializer: Expr):
+    def __init__(self, name: Token, initializer: 'Expr'):
         self.name = name
         self.initializer = initializer
 

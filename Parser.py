@@ -151,6 +151,7 @@ class Parser:
         return statements
 
     def statement(self) -> Stmt:
+        if (self.match(TokenType.IF)): return self.ifStatement()
         if (self.match(TokenType.PRINT)): return self.printStatement()
         if (self.match(TokenType.LEFT_BRACE)): return Block(self.block())
         return self.expressionStatement()
@@ -204,3 +205,15 @@ class Parser:
 
         self.consume(TokenType.SEMICOLON, "Expcet ';' after variable declaration")
         return Var(name, initializer)
+
+    def ifStatement(self):
+        self.consume(TokenType.LEFT_PAREN, "Except '(' after if.')")
+        condition = self.expression()
+        self.consume(TokenType.RIGHT_BRACE, "Except ')' after if conditon.")
+
+        theBranch = self.statement()
+        elseBranch = None
+        if self.match(TokenType.ELSE):
+            elseBranch = self.statement()
+
+        return If(condition, theBranch, elseBranch)
