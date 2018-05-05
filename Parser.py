@@ -129,7 +129,7 @@ class Parser:
     def sychronize(self) -> None:
         self.advance()
 
-        while self.isAtEnd():
+        while not self.isAtEnd(): # REVIEW: 不止一次忘记的 not
             if self.previous().type == TokenType.SEMICOLON: return
 
             if self.peek().type in [TokenType.CLASS,
@@ -163,6 +163,20 @@ class Parser:
         expr = self.expression()
         self.consume(TokenType.SEMICOLON, "Except ';' after expression.")
         return Expression(expr)
+
+    def assignment(self):
+        expr = self.equality()
+
+        if self.match(TokenType.EQUAL):
+            equals = self.previous()
+            value = self.assignment()
+
+            if isinstance(expr, Variable):
+                name = expr.name
+                return Assign(name, value)
+            self.error(equals, "Invalid assignment target.")
+
+        return expr
 
     def declaration(self):
         try:

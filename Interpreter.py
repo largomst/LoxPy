@@ -104,6 +104,12 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         self.environment.define(stmt.name.lexeme, value)
         return None
 
+    def visitAssignExpr(self, expr: Expr.Assign):
+        value = self.evaluate(expr.value)
+
+        self.environment.assign(expr.name,value)
+        return value
+
     def isTruthy(self, obj: object) -> bool:
         """nil and false is truthy"""
         if obj == None: return False  # nil
