@@ -47,7 +47,7 @@ __all__ = [
 ]
 
 class {{baseName}}Visitor:{% for typeName,fields in typesDict.items() %}
-    def visit{{typeName}}(self, {{baseName|lower}}: "{{typeName}}"): raise NotImplementedError
+    def visit{{typeName}}{{baseName}}(self, {{baseName|lower}}: "{{typeName}}"): raise NotImplementedError
 {% endfor %}
 
 class {{baseName}}:
@@ -61,7 +61,7 @@ class {{typeName}}({{baseName}}):
         self.{{k}} = {{k}}{%endfor%}
 
     def accept(self, visitor: {{baseName}}Visitor):
-        return visitor.visit{{typeName}}(self)
+        return visitor.visit{{typeName}}{{baseName}}(self)
 
 {% endfor %}
     """)

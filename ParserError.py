@@ -1,18 +1,20 @@
 # usr/bin env python3
 # coding: utf-8
-from typing import Type
 
-import ScannerError
-from Tokens import TokenType, Token
+from Tokens import Token, TokenType
+import ErrorState
 
 
 class ParseError(Exception):
-    pass
+    def __init__(self, token: Token, message: str):
+        self.token = token
+        self.message = message
 
+    def report(self):
+        if self.token.type == TokenType.EOF:
+            print(f'[line {self.token.line}] Error at end: {self.message}')
+        else:
+            where = self.token.lexeme
+            print(f"[line {self.token.line}] Error at '{where}': {self.message}")
 
-def error(token: Token, message: str) -> Type[ParseError]:
-    if token.type == TokenType.EOF:
-        ScannerError.report(token.line, " at end", message)
-    else:
-        ScannerError.report(token.line, " at '" + token.lexeme + "'", message)
-    return ParseError
+        ErrorState.hadError = True

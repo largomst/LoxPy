@@ -1,10 +1,11 @@
-# usr/bin env python3
-# coding: utf-8
+import ErrorState
 
 
-def error(line: int, message: str):
-    report(line, "", message)
+class ScanError(Exception):
+    def __init__(self, line: int, message: str):
+        self.line = line
+        self.message = message
 
-
-def report(line: int, where: str, message: str):
-    print(f"[line {line}] Error {where}: {message}")
+    def report(self):
+        print(f'[line {self.line}] Error: {self.message}')
+        ErrorState.hadError = True

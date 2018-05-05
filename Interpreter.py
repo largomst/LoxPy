@@ -1,13 +1,16 @@
+from typing import List
+
 import Expr
+import Stmt
 from Tokens import TokenType, Token
 from LoxRuntimeError import LoxRuntimeError, runtimeError
 
 
-class Interpreter(Expr.ExprVisitor):
-    def visitLiteral(self, expr: Expr.Literal) -> object:
+class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
+    def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
 
-    def visitUnary(self, expr: Expr.Unary):
+    def visitUnaryExpr(self, expr: Expr.Unary):
         right = self.evaluate(expr.right)
 
         if expr.operator.type == TokenType.MINUS:
@@ -28,10 +31,10 @@ class Interpreter(Expr.ExprVisitor):
             if isinstance(left, float) and isinstance(right, float): return
             raise LoxRuntimeError(operator, "Operator must be number.")
 
-    def visitGrouping(self, expr: Expr.Grouping) -> object:
+    def visitGroupingExpr(self, expr: Expr.Grouping) -> object:
         return self.evaluate(expr.expression)
 
-    def visitBinary(self, expr: Expr.Binary):
+    def visitBinaryExpr(self, expr: Expr.Binary):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
 
@@ -74,6 +77,18 @@ class Interpreter(Expr.ExprVisitor):
         """deliver the overriding visitor to expression#accept()"""
         return expr.accept(self)
 
+    def excute(self, stmt: Stmt.Stmt):
+        stmt.accept(self)
+
+    def visitExpressionStmt(self, stmt: Stmt.Expression):
+        self.evaluate(stmt.expression)
+        return None
+
+    def visitPrintStmt(self, stmt: Stmt.Print):
+        value = self.evaluate(stmt.expression)
+        print(self.stringify(value))
+        return None
+
     def isTruthy(self, obj: object) -> bool:
         """nil and false is truthy"""
         if obj == None: return False  # nil
@@ -97,9 +112,9 @@ class Interpreter(Expr.ExprVisitor):
 
         return str(obj)
 
-    def interpreter(self, expression: Expr):
+    def interpreter(self, statements: List[Stmt.Stmt]):
         try:
-            value = self.evaluate(expression)
-            print(self.stringify(value))
+            for statement in statements:
+                self.excute(statement)
         except LoxRuntimeError as error:
             runtimeError(error)

@@ -8,16 +8,16 @@ class AstPrinter(ExprVisitor):
     def print(self, expr: Expr) -> str:
         return expr.accept(self)
 
-    def visitBinary(self, expr: Binary):
+    def visitBinaryExpr(self, expr: Binary):
         return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)
 
-    def visitGrouping(self, expr: Grouping):
+    def visitGroupingExpr(self, expr: Grouping):
         return self.parenthesize("group", expr.expression)  # REVIEW: group 需要主动命名
 
-    def visitLiteral(self, expr: Literal):
+    def visitLiteralExpr(self, expr: Literal):
         return str(expr.value)  # REVIEW: 之前误写成 self.parenthesize(str(expr.value)) Literal 是 terminal
 
-    def visitUnary(self, expr: Unary):
+    def visitUnaryExpr(self, expr: Unary):
         return self.parenthesize(expr.operator.lexeme, expr.right)
 
     def parenthesize(self, name, *exprs: Expr):

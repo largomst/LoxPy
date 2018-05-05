@@ -1,7 +1,8 @@
 from typing import List
 
 from Expr import *
-from ParserError import error, ParseError
+from ParserError import ParseError
+from Stmt import *
 from Tokens import TokenType, Token
 
 
@@ -81,7 +82,7 @@ class Parser:
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression")
             return Grouping(expr)
 
-        raise error(self.peek(), "Except expression.")
+        raise self.error(self.peek(), "Except expression.")
 
     # infrastructure primitive operation
     def match(self, *types: TokenType) -> bool:
@@ -98,7 +99,12 @@ class Parser:
         if self.check(type):
             return self.advance()
         else:
-            raise error(self.peek(), message)
+            raise self.error(self.peek(), message)
+
+    def error(self, token: Token, message: str):
+        err = ParseError(token, message)
+        err.report()
+        return err
 
     def check(self, tokenType: TokenType) -> bool:
         if self.isAtEnd(): return False  # REVIEW: 注意此处是否定
@@ -134,8 +140,23 @@ class Parser:
                 return
         self.advance()
 
-    def parse(self):
-        try:
-            return self.expression()
-        except ParseError as error:
-            return None
+    def parse(self) -> List[Stmt]:
+        statements = []
+        while not self.isAtEnd():
+            statements.append(self.statement())
+
+        return statements
+
+    def statement(self) -> Stmt:
+        if (self.match(TokenType.PRINT)): return self.printStatement()
+        return self.expressionStatement()
+
+    def printStatement(self) -> Stmt:
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Except ';' after value.")
+        return Print(value)
+
+    def expressionStatement(self) -> Stmt:
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Except ';' after expression.")
+        return Expression(expr)

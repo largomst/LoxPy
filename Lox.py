@@ -3,14 +3,15 @@ from typing import TypeVar
 
 # static check
 import Interpreter
+import ErrorState
 from Scanner import Scanner
 import Parser
 
+ErrorState.hadError = False
+ErrorState.hadRuntimeError = False
 T = TypeVar('T')
 
 interpreter = Interpreter.Interpreter()  # REVIEW: keep REPL session
-hadError = False
-hadRuntimeError = False
 
 
 def main():
@@ -24,15 +25,14 @@ def main():
 
 def runFile(path: str):
     run(open(path, 'r', encoding='utf-8').read())
-    if hadError: sys.exit(65)
-    if hadRuntimeError: sys.exit(70)
+    if ErrorState.hadError: sys.exit(65)
+    if ErrorState.hadRuntimeError: sys.exit(70)
 
 
 def runPrompt():
     while True:
         run(input('> '))
-        global hadError
-        hadError = False
+        ErrorState.hadError = False
 
 
 def run(source: str):
@@ -41,11 +41,11 @@ def run(source: str):
     # for token in tokens:
     #     print(token)
     parser = Parser.Parser(tokens)
-    expression = parser.parse()
+    statements = parser.parse()
 
-    if hadError: return
+    if ErrorState.hadError: return
 
-    interpreter.interpreter(expression)
+    interpreter.interpreter(statements)
 
 
 # Map<String, TokenType>

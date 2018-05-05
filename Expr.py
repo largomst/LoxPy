@@ -10,13 +10,13 @@ __all__ = [
 ]
 
 class ExprVisitor:
-    def visitBinary(self, expr: "Binary"): raise NotImplementedError
+    def visitBinaryExpr(self, expr: "Binary"): raise NotImplementedError
 
-    def visitGrouping(self, expr: "Grouping"): raise NotImplementedError
+    def visitGroupingExpr(self, expr: "Grouping"): raise NotImplementedError
 
-    def visitLiteral(self, expr: "Literal"): raise NotImplementedError
+    def visitLiteralExpr(self, expr: "Literal"): raise NotImplementedError
 
-    def visitUnary(self, expr: "Unary"): raise NotImplementedError
+    def visitUnaryExpr(self, expr: "Unary"): raise NotImplementedError
 
 
 class Expr:
@@ -32,7 +32,7 @@ class Binary(Expr):
         self.right = right
 
     def accept(self, visitor: ExprVisitor):
-        return visitor.visitBinary(self)
+        return visitor.visitBinaryExpr(self)
 
 
 class Grouping(Expr):
@@ -41,7 +41,7 @@ class Grouping(Expr):
         self.expression = expression
 
     def accept(self, visitor: ExprVisitor):
-        return visitor.visitGrouping(self)
+        return visitor.visitGroupingExpr(self)
 
 
 class Literal(Expr):
@@ -50,7 +50,7 @@ class Literal(Expr):
         self.value = value
 
     def accept(self, visitor: ExprVisitor):
-        return visitor.visitLiteral(self)
+        return visitor.visitLiteralExpr(self)
 
 
 class Unary(Expr):
@@ -60,7 +60,7 @@ class Unary(Expr):
         self.right = right
 
     def accept(self, visitor: ExprVisitor):
-        return visitor.visitUnary(self)
+        return visitor.visitUnaryExpr(self)
 
 
     

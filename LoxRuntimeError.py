@@ -1,3 +1,4 @@
+import ErrorState
 from Tokens import Token
 
 
@@ -11,7 +12,4 @@ class LoxRuntimeError(RuntimeError):
 
 def runtimeError(error: LoxRuntimeError):
     print("{}\n[line {}]".format(error.message, error.token.line))
-    global hadRuntimeError
-    hadRuntimeError = True
-
-
+    ErrorState.hadRuntimeError = True

@@ -1,3 +1,4 @@
+from Expr import Expr
 from Tokens import Token
 
 __all__ = [
@@ -8,9 +9,9 @@ __all__ = [
 ]
 
 class StmtVisitor:
-    def visitExpression(self, stmt: "Expression"): raise NotImplementedError
+    def visitExpressionStmt(self, stmt: "Expression"): raise NotImplementedError
 
-    def visitPrint(self, stmt: "Print"): raise NotImplementedError
+    def visitPrintStmt(self, stmt: "Print"): raise NotImplementedError
 
 
 class Stmt:
@@ -24,7 +25,7 @@ class Expression(Stmt):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor):
-        return visitor.visitExpression(self)
+        return visitor.visitExpressionStmt(self)
 
 
 class Print(Stmt):
@@ -33,7 +34,7 @@ class Print(Stmt):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor):
-        return visitor.visitPrint(self)
+        return visitor.visitPrintStmt(self)
 
 
     

@@ -1,7 +1,7 @@
 # usr/bin env python3
 # coding: utf-8
 from typing import List
-from ScannerError import error
+from ScannerError import ScanError
 from Tokens import Token, TokenType
 
 
@@ -83,7 +83,7 @@ class Scanner:
             elif self.isAlpha(c):
                 self.identifier()
             else:
-                error(self.line, "Unexpected character.")
+                self.error(self, "Unexpected character.")
 
     def advance(self) -> str:
         """**consume**
@@ -117,7 +117,7 @@ class Scanner:
 
         # 未正常终结
         if self.isAtEnd():
-            error(self.line, "Unterminated string.")
+            self.error(self, "Unterminated string.")
             return
 
         # 正常闭合 '"'
@@ -150,7 +150,7 @@ class Scanner:
 
     def identifier(self):
         while self.isAlphaNumeric(self.peek()): self.advance()
-        self.addToken(TokenType.IDENTIFIER)
+        # self.addToken(TokenType.IDENTIFIER)
 
         # review 判断标识符是否为保留字
         text = self.source[self.start: self.current]
@@ -163,6 +163,11 @@ class Scanner:
 
     def isAlphaNumeric(self, c):
         return self.isAlpha(c) or self.isDigit(c)
+
+    def error(self,token, message):
+        err = ScanError(self.line, message)
+        err.report()
+
 
 
 keywords = {
