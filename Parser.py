@@ -77,6 +77,9 @@ class Parser:
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return Literal(self.previous().literal)
 
+        if self.match(TokenType.IDENTIFIER):
+            return Variable(self.previous())
+
         if self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression")
@@ -143,7 +146,7 @@ class Parser:
     def parse(self) -> List[Stmt]:
         statements = []
         while not self.isAtEnd():
-            statements.append(self.statement())
+            statements.append(self.declaration())
 
         return statements
 
@@ -160,3 +163,21 @@ class Parser:
         expr = self.expression()
         self.consume(TokenType.SEMICOLON, "Except ';' after expression.")
         return Expression(expr)
+
+    def declaration(self):
+        try:
+            if self.match(TokenType.VAR): return self.VarDeclaration()
+            return self.statement()
+        except ParseError as error:
+            self.sychronize()
+            return None
+
+    def VarDeclaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Except variable name.")
+
+        initializer = None
+        if self.match(TokenType.EQUAL):
+            initializer = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expcet ';' after variable declaration")
+        return Var(name, initializer)

@@ -1,4 +1,3 @@
-from Expr import Expr
 from Tokens import Token
 
 __all__ = [
@@ -6,12 +5,15 @@ __all__ = [
     "Stmt",
     "Expression",
     "Print",
+    "Var",
 ]
 
 class StmtVisitor:
     def visitExpressionStmt(self, stmt: "Expression"): raise NotImplementedError
 
     def visitPrintStmt(self, stmt: "Print"): raise NotImplementedError
+
+    def visitVarStmt(self, stmt: "Var"): raise NotImplementedError
 
 
 class Stmt:
@@ -35,6 +37,16 @@ class Print(Stmt):
 
     def accept(self, visitor: StmtVisitor):
         return visitor.visitPrintStmt(self)
+
+
+class Var(Stmt):
+
+    def __init__(self, name: Token, initializer: Expr):
+        self.name = name
+        self.initializer = initializer
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitVarStmt(self)
 
 
     

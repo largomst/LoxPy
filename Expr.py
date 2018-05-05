@@ -7,6 +7,7 @@ __all__ = [
     "Grouping",
     "Literal",
     "Unary",
+    "Variable",
 ]
 
 class ExprVisitor:
@@ -17,6 +18,8 @@ class ExprVisitor:
     def visitLiteralExpr(self, expr: "Literal"): raise NotImplementedError
 
     def visitUnaryExpr(self, expr: "Unary"): raise NotImplementedError
+
+    def visitVariableExpr(self, expr: "Variable"): raise NotImplementedError
 
 
 class Expr:
@@ -61,6 +64,15 @@ class Unary(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visitUnaryExpr(self)
+
+
+class Variable(Expr):
+
+    def __init__(self, name: Token):
+        self.name = name
+
+    def accept(self, visitor: ExprVisitor):
+        return visitor.visitVariableExpr(self)
 
 
     

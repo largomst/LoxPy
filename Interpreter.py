@@ -2,11 +2,15 @@ from typing import List
 
 import Expr
 import Stmt
+from Environment import Environment
 from Tokens import TokenType, Token
 from LoxRuntimeError import LoxRuntimeError, runtimeError
 
 
 class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
+    def __init__(self):
+        self.environment = Environment()
+
     def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
 
@@ -21,6 +25,9 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
 
         # Unreachable
         return None
+
+    def visitVariableExpr(self, expr: Expr.Variable):
+        return self.environment.get(expr.name)
 
     # REVIEW: 这里用默认参数来替代实现 Java 的 Overloading，看起来不太漂亮
     def checkNumberOperand(self, operator: Token, left: object, right: object = None):
@@ -87,6 +94,14 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def visitPrintStmt(self, stmt: Stmt.Print):
         value = self.evaluate(stmt.expression)
         print(self.stringify(value))
+        return None
+
+    def visitVarStmt(self, stmt: Stmt.Var):
+        value = None
+        if stmt.initializer != None:
+            value = self.evaluate(stmt.initializer)
+
+        self.environment.define(stmt.name.lexeme, value)
         return None
 
     def isTruthy(self, obj: object) -> bool:
