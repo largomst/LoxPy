@@ -129,7 +129,7 @@ class Parser:
     def sychronize(self) -> None:
         self.advance()
 
-        while not self.isAtEnd(): # REVIEW: 不止一次忘记的 not
+        while not self.isAtEnd():  # REVIEW: 不止一次忘记的 not
             if self.previous().type == TokenType.SEMICOLON: return
 
             if self.peek().type in [TokenType.CLASS,
@@ -152,6 +152,7 @@ class Parser:
 
     def statement(self) -> Stmt:
         if (self.match(TokenType.PRINT)): return self.printStatement()
+        if (self.match(TokenType.LEFT_BRACE)): return Block(self.block())
         return self.expressionStatement()
 
     def printStatement(self) -> Stmt:
@@ -163,6 +164,14 @@ class Parser:
         expr = self.expression()
         self.consume(TokenType.SEMICOLON, "Except ';' after expression.")
         return Expression(expr)
+
+    def block(self) -> List[Stmt]:
+        statements = []
+        while not self.check(TokenType.RIGHT_BRACE) and not self.isAtEnd():
+            statements.append(self.declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Except '}' after block.")
+        return statements
 
     def assignment(self):
         expr = self.equality()

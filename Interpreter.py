@@ -84,8 +84,21 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         """deliver the overriding visitor to expression#accept()"""
         return expr.accept(self)
 
-    def excute(self, stmt: Stmt.Stmt):
+    def execute(self, stmt: Stmt.Stmt):
         stmt.accept(self)
+
+    def visitBlockStmt(self, stmt: Stmt.Block):
+        self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
+    def executeBlock(self, statements, environment: Environment):
+        previous = self.environment
+        try:
+            self.environment = environment
+            for statement in statements:
+                self.execute(statement)
+        finally:
+            self.environment = previous
 
     def visitExpressionStmt(self, stmt: Stmt.Expression):
         self.evaluate(stmt.expression)
@@ -107,7 +120,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def visitAssignExpr(self, expr: Expr.Assign):
         value = self.evaluate(expr.value)
 
-        self.environment.assign(expr.name,value)
+        self.environment.assign(expr.name, value)
         return value
 
     def isTruthy(self, obj: object) -> bool:
@@ -136,6 +149,6 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def interpreter(self, statements: List[Stmt.Stmt]):
         try:
             for statement in statements:
-                self.excute(statement)
+                self.execute(statement)
         except LoxRuntimeError as error:
             runtimeError(error)
