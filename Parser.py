@@ -164,6 +164,7 @@ class Parser:
         if (self.match(TokenType.FOR)): return self.forStatement()
         if (self.match(TokenType.IF)): return self.ifStatement()
         if (self.match(TokenType.PRINT)): return self.printStatement()
+        if (self.match(TokenType.RETURN)): return self.returnStatement()
         if (self.match(TokenType.WHILE)): return self.whileStatement()
         if (self.match(TokenType.LEFT_BRACE)): return Block(self.block())
         return self.expressionStatement()
@@ -321,3 +322,12 @@ class Parser:
         self.consume(TokenType.LEFT_BRACE, "Expect '{{' before {} body.".format(kind))
         body = self.block()
         return Function(name, parameters, body)
+
+    def returnStatement(self):
+        keyword = self.previous()
+        value = None
+        if not self.check(TokenType.SEMICOLON):
+            value = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expect ';' after return value.")
+        return Return(keyword, value)

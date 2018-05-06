@@ -7,6 +7,7 @@ import Stmt
 from Environment import Environment
 from LoxCallable import LoxCallable
 from LoxFunction import LoxFunction
+from Return import Return
 from Tokens import TokenType, Token
 from LoxRuntimeError import LoxRuntimeError, runtimeError
 
@@ -17,8 +18,8 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         self.environment = self.globals
         # 用 type 仿照 Java 建立匿名类
         self.globals.define("clock", type('AnonymousClass', (LoxCallable,),
-                                     {'arity': lambda self: 0,
-                                      'call': lambda self, interpreter, arguments: time.perf_counter()})())
+                                          {'arity': lambda self: 0,
+                                           'call': lambda self, interpreter, arguments: time.perf_counter()})())
 
     def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
@@ -155,6 +156,12 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         value = self.evaluate(stmt.expression)
         print(self.stringify(value))
         return None
+
+    def visitReturnStmt(self, stmt: Stmt.Return):
+        value = None
+        if stmt.value is not None:
+            value = self.evaluate(stmt.value)
+        raise Return(value)
 
     def visitVarStmt(self, stmt: Stmt.Var):
         value = None

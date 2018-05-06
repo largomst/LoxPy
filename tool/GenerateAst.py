@@ -27,6 +27,7 @@ def main():
         "Function   : Token name, List[Token] parameters, List[Stmt] body",
         "Expression : 'Expr' expression",
         "Print      : 'Expr' expression",
+        "Return     : Token keyword, 'Expr' value",
         "Var        : Token name, 'Expr' initializer",
         "While      : 'Expr' condition, Stmt body"
     ])

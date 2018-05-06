@@ -3,6 +3,7 @@ from typing import List
 import Stmt
 from Environment import Environment
 from LoxCallable import LoxCallable
+from Return import Return
 
 
 class LoxFunction(LoxCallable):
@@ -14,7 +15,10 @@ class LoxFunction(LoxCallable):
         for i in range(len(self.declaration.parameters)):
             environment.define(self.declaration.parameters[i].lexeme, arguments[i])
 
-        interpreter.executeBlock(self.declaration.body, environment)
+        try:
+            interpreter.executeBlock(self.declaration.body, environment)
+        except Return as returnValue:
+            return returnValue.value
 
     def arity(self):
         return len(self.declaration.parameters)

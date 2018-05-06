@@ -9,6 +9,7 @@ __all__ = [
     "Function",
     "Expression",
     "Print",
+    "Return",
     "Var",
     "While",
 ]
@@ -23,6 +24,8 @@ class StmtVisitor:
     def visitExpressionStmt(self, stmt: "Expression"): raise NotImplementedError
 
     def visitPrintStmt(self, stmt: "Print"): raise NotImplementedError
+
+    def visitReturnStmt(self, stmt: "Return"): raise NotImplementedError
 
     def visitVarStmt(self, stmt: "Var"): raise NotImplementedError
 
@@ -81,6 +84,16 @@ class Print(Stmt):
 
     def accept(self, visitor: StmtVisitor):
         return visitor.visitPrintStmt(self)
+
+
+class Return(Stmt):
+
+    def __init__(self, keyword: Token, value: 'Expr'):
+        self.keyword = keyword
+        self.value = value
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitReturnStmt(self)
 
 
 class Var(Stmt):
