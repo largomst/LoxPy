@@ -14,6 +14,16 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
 
+    def visitLogicalExpr(self, expr: Expr.Logical):
+        """short-circuits and return"""
+        left = self.evaluate(expr.left)
+        if expr.operator.type == TokenType.OR:  # or
+            if self.isTruthy(left): return left
+        else:  # and
+            if not self.isTruthy(left): return left
+
+        return self.evaluate(expr.right)
+
     def visitUnaryExpr(self, expr: Expr.Unary):
         right = self.evaluate(expr.right)
 

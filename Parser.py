@@ -175,7 +175,7 @@ class Parser:
         return statements
 
     def assignment(self):
-        expr = self.equality()
+        expr = self.or_()
 
         if self.match(TokenType.EQUAL):
             equals = self.previous()
@@ -217,3 +217,23 @@ class Parser:
             elseBranch = self.statement()
 
         return If(condition, theBranch, elseBranch)
+
+    def or_(self):
+        expr = self.and_()
+
+        while self.match(TokenType.OR):
+            operator = self.previous()
+            right = self.and_()
+            expr = Logical(expr, operator, right)
+
+        return expr
+
+    def and_(self):
+        expr = self.equality()
+
+        while self.match(TokenType.AND):
+            operator = self.previous()
+            right = self.equality()
+            expr = Logical(expr, operator, right)
+
+        return expr
