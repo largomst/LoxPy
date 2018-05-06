@@ -9,6 +9,7 @@ __all__ = [
     "Expression",
     "Print",
     "Var",
+    "While",
 ]
 
 class StmtVisitor:
@@ -21,6 +22,8 @@ class StmtVisitor:
     def visitPrintStmt(self, stmt: "Print"): raise NotImplementedError
 
     def visitVarStmt(self, stmt: "Var"): raise NotImplementedError
+
+    def visitWhileStmt(self, stmt: "While"): raise NotImplementedError
 
 
 class Stmt:
@@ -74,6 +77,16 @@ class Var(Stmt):
 
     def accept(self, visitor: StmtVisitor):
         return visitor.visitVarStmt(self)
+
+
+class While(Stmt):
+
+    def __init__(self, condition: 'Expr', body: Stmt):
+        self.condition = condition
+        self.body = body
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitWhileStmt(self)
 
 
     

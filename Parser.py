@@ -153,6 +153,7 @@ class Parser:
     def statement(self) -> Stmt:
         if (self.match(TokenType.IF)): return self.ifStatement()
         if (self.match(TokenType.PRINT)): return self.printStatement()
+        if (self.match(TokenType.WHILE)): return self.whileStatement()
         if (self.match(TokenType.LEFT_BRACE)): return Block(self.block())
         return self.expressionStatement()
 
@@ -237,3 +238,11 @@ class Parser:
             expr = Logical(expr, operator, right)
 
         return expr
+
+    def whileStatement(self):
+        self.consume(TokenType.LEFT_PAREN, "Except '(' after 'while'.")
+        condition = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Except ') after condition.")
+        body = self.statement()
+
+        return While(condition, body)
