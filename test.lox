@@ -5,7 +5,7 @@ while (a < 10000) {
   print a;
   var prev = a;
   a = b;
-  b = temp + b;
+  b = prev + b;
 }
 
 for (var a=0; a <= 100; a = a + 1)

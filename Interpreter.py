@@ -3,6 +3,7 @@ from typing import List
 import Expr
 import Stmt
 from Environment import Environment
+from LoxCallable import LoxCallable
 from Tokens import TokenType, Token
 from LoxRuntimeError import LoxRuntimeError, runtimeError
 
@@ -89,6 +90,22 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
 
         # Unreachable
         return None
+
+    def visitCallExpr(self, expr: Expr.Call):
+        callee: object = self.evaluate(expr.callee)  # 可调用可以是任何对象
+
+        arguments = []
+        for argument in arguments:
+            arguments.append(self.evaluate(argument))
+
+        if not isinstance(callee, LoxCallable):
+            raise LoxRuntimeError(expr.paren, "Can only call function and classes.")
+
+        function: LoxCallable = callee  # 调用可调用对象
+        if len(arguments) != function.arity():
+            raise LoxRuntimeError(expr.paren, f"Expected {function.arity()} arguments but got {len(arguments)} .")
+
+        return function.call(self, arguments)
 
     def evaluate(self, expr: Expr.Expr):
         """deliver the overriding visitor to expression#accept()"""

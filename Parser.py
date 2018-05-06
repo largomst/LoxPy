@@ -67,7 +67,16 @@ class Parser:
             right = self.unary()
             return Unary(operator, right)
         else:
-            return self.primary()
+            return self.call()
+
+    def call(self):
+        expr = self.primary()
+        while True:
+            if self.match(TokenType.LEFT_PAREN):
+                expr = self.finishCall(expr)  # 对可调用对象求值
+            else:
+                break
+        return expr
 
     def primary(self) -> Expr:
         if self.match(TokenType.FALSE): return Literal(False)
@@ -284,3 +293,13 @@ class Parser:
             body = Block([initializer, body])
 
         return body
+
+    def finishCall(self, callee: Expr):
+        arguments = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            arguments.append(self.expression())
+            while self.match(TokenType.COMMA):
+                if len(arguments) >= 8: self.error(self.peek(), "Cannot have more than 8 arguments.")
+                arguments.append(self.expression())
+        paren = self.consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.")
+        return Call(callee, paren, arguments)

@@ -6,6 +6,7 @@ __all__ = [
     "Expr",
     "Assign",
     "Binary",
+    "Call",
     "Grouping",
     "Literal",
     "Logical",
@@ -17,6 +18,8 @@ class ExprVisitor:
     def visitAssignExpr(self, expr: "Assign"): raise NotImplementedError
 
     def visitBinaryExpr(self, expr: "Binary"): raise NotImplementedError
+
+    def visitCallExpr(self, expr: "Call"): raise NotImplementedError
 
     def visitGroupingExpr(self, expr: "Grouping"): raise NotImplementedError
 
@@ -53,6 +56,17 @@ class Binary(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visitBinaryExpr(self)
+
+
+class Call(Expr):
+
+    def __init__(self, callee: Expr, paren: Token, arguments: List[Expr]):
+        self.callee = callee
+        self.paren = paren
+        self.arguments = arguments
+
+    def accept(self, visitor: ExprVisitor):
+        return visitor.visitCallExpr(self)
 
 
 class Grouping(Expr):
