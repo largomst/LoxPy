@@ -6,6 +6,7 @@ __all__ = [
     "Stmt",
     "Block",
     "If",
+    "Function",
     "Expression",
     "Print",
     "Var",
@@ -16,6 +17,8 @@ class StmtVisitor:
     def visitBlockStmt(self, stmt: "Block"): raise NotImplementedError
 
     def visitIfStmt(self, stmt: "If"): raise NotImplementedError
+
+    def visitFunctionStmt(self, stmt: "Function"): raise NotImplementedError
 
     def visitExpressionStmt(self, stmt: "Expression"): raise NotImplementedError
 
@@ -49,6 +52,17 @@ class If(Stmt):
 
     def accept(self, visitor: StmtVisitor):
         return visitor.visitIfStmt(self)
+
+
+class Function(Stmt):
+
+    def __init__(self, name: Token, parameters: List[Token], body: List[Stmt]):
+        self.name = name
+        self.parameters = parameters
+        self.body = body
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitFunctionStmt(self)
 
 
 class Expression(Stmt):

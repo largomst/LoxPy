@@ -6,16 +6,17 @@ import Expr
 import Stmt
 from Environment import Environment
 from LoxCallable import LoxCallable
+from LoxFunction import LoxFunction
 from Tokens import TokenType, Token
 from LoxRuntimeError import LoxRuntimeError, runtimeError
 
 
 class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def __init__(self):
-        globals = Environment()
-        self.environment = globals
+        self.globals = Environment()
+        self.environment = self.globals
         # 用 type 仿照 Java 建立匿名类
-        globals.define("clock", type('AnonymousClass', (LoxCallable,),
+        self.globals.define("clock", type('AnonymousClass', (LoxCallable,),
                                      {'arity': lambda self: 0,
                                       'call': lambda self, interpreter, arguments: time.perf_counter()})())
 
@@ -102,7 +103,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         callee: object = self.evaluate(expr.callee)  # 可调用可以是任何对象
 
         arguments = []
-        for argument in arguments:
+        for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
 
         if not isinstance(callee, LoxCallable):
@@ -136,6 +137,11 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
 
     def visitExpressionStmt(self, stmt: Stmt.Expression):
         self.evaluate(stmt.expression)
+        return None
+
+    def visitFunctionStmt(self, stmt: Stmt.Function):
+        function_ = LoxFunction(stmt)
+        self.environment.define(stmt.name.lexeme, function_)
         return None
 
     def visitIfStmt(self, stmt: Stmt.If):

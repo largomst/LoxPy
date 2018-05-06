@@ -203,6 +203,7 @@ class Parser:
 
     def declaration(self):
         try:
+            if self.match(TokenType.FUN): return self.function('function')
             if self.match(TokenType.VAR): return self.varDeclaration()
             return self.statement()
         except ParseError as error:
@@ -303,3 +304,20 @@ class Parser:
                 arguments.append(self.expression())
         paren = self.consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.")
         return Call(callee, paren, arguments)
+
+    def function(self, kind: str) -> Function:
+        name = self.consume(TokenType.IDENTIFIER, f"Expect '(' after {kind} name.")
+        self.consume(TokenType.LEFT_PAREN, f"Expect '(' after {kind} name.")
+        parameters: List[Token] = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                if len(parameters) >= 8:
+                    self.error(self.peek(), "Cannot have more than 8 parameters.")
+                parameters.append(self.consume(TokenType.IDENTIFIER, "Except parameter name."))
+                if not self.match(TokenType.COMMA):
+                    break  # REVIEW: 用 while if break 模拟 do while 时注意 if condition 是否定的
+        self.consume(TokenType.RIGHT_PAREN, "Except ')' after parameters.")
+
+        self.consume(TokenType.LEFT_BRACE, "Expect '{{' before {} body.".format(kind))
+        body = self.block()
+        return Function(name, parameters, body)
