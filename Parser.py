@@ -13,7 +13,7 @@ class Parser:
 
     # expression -> equality ;
     def expression(self) -> Expr:
-        return self.equality()
+        return self.assignment()
 
     # equality -> comparison ( ( "!=" | "==" ) comparison )* ;
     def equality(self) -> Expr:
@@ -208,7 +208,7 @@ class Parser:
         return Var(name, initializer)
 
     def ifStatement(self):
-        self.consume(TokenType.LEFT_PAREN, "Except '(' after if.')")
+        self.consume(TokenType.LEFT_PAREN, "Except '(' after if.")
         condition = self.expression()
         self.consume(TokenType.RIGHT_BRACE, "Except ')' after if conditon.")
 
