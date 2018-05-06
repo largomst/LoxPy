@@ -1,5 +1,7 @@
 from typing import List
 
+import time
+
 import Expr
 import Stmt
 from Environment import Environment
@@ -10,7 +12,12 @@ from LoxRuntimeError import LoxRuntimeError, runtimeError
 
 class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def __init__(self):
-        self.environment = Environment()
+        globals = Environment()
+        self.environment = globals
+        # 用 type 仿照 Java 建立匿名类
+        globals.define("clock", type('AnonymousClass', (LoxCallable,),
+                                     {'arity': lambda self: 0,
+                                      'call': lambda self, interpreter, arguments: time.perf_counter()})())
 
     def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
