@@ -24,4 +24,5 @@ class Environment:
             return
         if self.enclosing is not None:  # 允许修改外部作用域的变量的值
             self.enclosing.values[name.lexeme] = value
+            return
         raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")

@@ -99,6 +99,7 @@ class Parser:
         return False
 
     def consume(self, type: TokenType, message: str) -> Token:
+        """match, advance and raise parser error"""
         if self.check(type):
             return self.advance()
         else:
@@ -151,6 +152,7 @@ class Parser:
         return statements
 
     def statement(self) -> Stmt:
+        if (self.match(TokenType.FOR)): return self.forStatement()
         if (self.match(TokenType.IF)): return self.ifStatement()
         if (self.match(TokenType.PRINT)): return self.printStatement()
         if (self.match(TokenType.WHILE)): return self.whileStatement()
@@ -163,6 +165,7 @@ class Parser:
         return Print(value)
 
     def expressionStatement(self) -> Stmt:
+        """expression statement is a expression with a semicolon end"""
         expr = self.expression()
         self.consume(TokenType.SEMICOLON, "Except ';' after expression.")
         return Expression(expr)
@@ -191,13 +194,13 @@ class Parser:
 
     def declaration(self):
         try:
-            if self.match(TokenType.VAR): return self.VarDeclaration()
+            if self.match(TokenType.VAR): return self.varDeclaration()
             return self.statement()
         except ParseError as error:
             self.sychronize()
             return None
 
-    def VarDeclaration(self):
+    def varDeclaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Except variable name.")
 
         initializer = None
@@ -246,3 +249,38 @@ class Parser:
         body = self.statement()
 
         return While(condition, body)
+
+    def forStatement(self):
+        self.consume(TokenType.LEFT_PAREN, "Except '(' after 'for'.")
+
+        if self.match(TokenType.SEMICOLON):
+            initializer = None
+        elif self.match(TokenType.VAR):
+            initializer = self.varDeclaration()
+        else:
+            initializer = self.expressionStatement()
+
+        condition = None
+        if not self.check(TokenType.SEMICOLON):
+            condition = self.expression()
+        self.consume(TokenType.SEMICOLON, "Except ';' after loop condition.")
+
+        increment = None
+        if not self.check(TokenType.RIGHT_PAREN):
+            increment = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Excpet ';' after for caluses.")
+
+        body = self.statement()
+
+        if increment is not None:
+            body = Block([body, Expression(increment)])
+
+        if condition is None:
+            condition = Literal(True)
+
+        body = While(condition, body)
+
+        if initializer is not None:
+            body = Block([initializer, body])
+
+        return body
