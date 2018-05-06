@@ -224,7 +224,7 @@ class Parser:
     def ifStatement(self):
         self.consume(TokenType.LEFT_PAREN, "Except '(' after if.")
         condition = self.expression()
-        self.consume(TokenType.RIGHT_BRACE, "Except ')' after if conditon.")
+        self.consume(TokenType.RIGHT_PAREN, "Except ')' after if conditon.")
 
         theBranch = self.statement()
         elseBranch = None
