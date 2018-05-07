@@ -4,6 +4,7 @@ from typing import TypeVar
 # static check
 import Interpreter
 import ErrorState
+from Resolver import Resolver
 from Scanner import Scanner
 import Parser
 
@@ -44,6 +45,8 @@ def run(source: str):
     statements = parser.parse()
 
     if ErrorState.hadError: return
+    resolver = Resolver(interpreter)
+    resolver.resolve(statements)
 
     interpreter.interpreter(statements)
 

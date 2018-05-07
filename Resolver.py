@@ -102,7 +102,7 @@ class Resolver(ExprVisitor, StmtVisitor):
 
     def visitVariableExpr(self, expr: Variable):
         """if a variable is declared but not yet defined, report a error."""
-        if not self.isEmpty(self.scopes) and self.peek(self.scopes)[expr.name.lexeme] == False:
+        if not self.isEmpty(self.scopes) and self.peek(self.scopes)[expr.name.lexeme] is False:
             ParseError(expr.name, "Cannot read local variable in its own initializer").report()
 
         self.resolveLocal(expr, expr.name)

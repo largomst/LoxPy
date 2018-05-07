@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import time
 
@@ -20,6 +20,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         self.globals.define("clock", type('AnonymousClass', (LoxCallable,),
                                           {'arity': lambda self: 0,
                                            'call': lambda self, interpreter, arguments: time.perf_counter()})())
+        self.locals: Dict[Expr.Expr, int] = {}
 
     def visitLiteralExpr(self, expr: Expr.Literal) -> object:
         return expr.value
@@ -47,7 +48,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         return None
 
     def visitVariableExpr(self, expr: Expr.Variable):
-        return self.environment.get(expr.name)
+        return self.loopUpVariable(expr.name, expr)
 
     # REVIEW: 这里用默认参数来替代实现 Java 的 Overloading，看起来不太漂亮
     def checkNumberOperand(self, operator: Token, left: object, right: object = None):
@@ -123,6 +124,9 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def execute(self, stmt: Stmt.Stmt):
         stmt.accept(self)
 
+    def resolve(self, expr: Expr.Expr, depth: int):
+        self.locals[expr] = depth
+
     def visitBlockStmt(self, stmt: Stmt.Block):
         self.executeBlock(stmt.statements, Environment(self.environment))
         return None
@@ -179,7 +183,12 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
     def visitAssignExpr(self, expr: Expr.Assign):
         value = self.evaluate(expr.value)
 
-        self.environment.assign(expr.name, value)
+        distance = self.locals.get(expr)
+        if distance is not None:
+            self.environment.assignAt(distance, expr.name, value)
+        else:
+            self.globals.assign(expr.name, value)
+
         return value
 
     def isTruthy(self, obj: object) -> bool:
@@ -211,3 +220,10 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
                 self.execute(statement)
         except LoxRuntimeError as error:
             runtimeError(error)
+
+    def loopUpVariable(self, name: Token, expr: Expr.Expr):
+        distance = self.locals.get(expr)
+        if distance is not None:
+            return self.environment.getAt(distance, name.lexeme)  # get -> getAt , get 是动态获取变量定义，getAt 是动态行为
+        else:
+            return self.globals.get(name)
