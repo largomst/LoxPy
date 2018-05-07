@@ -22,9 +22,10 @@ def main():
     ])
 
     defineAst(outputDir, "Stmt", [
-        "Block    : List[Stmt] statements",
+        "Block      : List[Stmt] statements",
         "If         : 'Expr' condition, Stmt thenBranch, Stmt elseBranch",
         "Function   : Token name, List[Token] parameters, List[Stmt] body",
+        "Class      : Token name, List[Function] methods",
         "Expression : 'Expr' expression",
         "Print      : 'Expr' expression",
         "Return     : Token keyword, 'Expr' value",

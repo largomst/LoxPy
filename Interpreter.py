@@ -6,6 +6,7 @@ import Expr
 import Stmt
 from Environment import Environment
 from LoxCallable import LoxCallable
+from LoxClass import LoxClass
 from LoxFunction import LoxFunction
 from Return import Return
 from Tokens import TokenType, Token
@@ -129,6 +130,12 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
 
     def visitBlockStmt(self, stmt: Stmt.Block):
         self.executeBlock(stmt.statements, Environment(self.environment))
+        return None
+
+    def visitClassStmt(self, stmt: Stmt.Class):
+        self.environment.define(stmt.name.lexeme, None)
+        class_ = LoxClass(stmt.name.lexeme)
+        self.environment.assign(stmt.name, class_)
         return None
 
     def executeBlock(self, statements, environment: Environment):

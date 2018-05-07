@@ -37,6 +37,11 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.endScope()
         return None
 
+    def visitClassStmt(self, stmt: Class):
+        self.declare(stmt.name)
+        self.declare(stmt.methods)
+        return None
+
     def visitExpressionStmt(self, stmt: Expression):
         self.resolve(stmt.expression)
         return None

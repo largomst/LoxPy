@@ -45,9 +45,17 @@ var a = "global";
 }
 
 // 静态作用域测试
-var a = "outer";
-print a;
-{
-  var a = a;
-  print a;
+// var a = "outer";
+// print a;
+// {
+//  var a = a;
+//  print a;
+// }
+
+class THIS {
+    method(){
+        return "method";
+    }
 }
+
+print THIS;

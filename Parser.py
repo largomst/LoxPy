@@ -204,6 +204,7 @@ class Parser:
 
     def declaration(self):
         try:
+            if self.match(TokenType.CLASS): return self.classDeclaration()
             if self.match(TokenType.FUN): return self.function('function')
             if self.match(TokenType.VAR): return self.varDeclaration()
             return self.statement()
@@ -331,3 +332,15 @@ class Parser:
 
         self.consume(TokenType.SEMICOLON, "Expect ';' after return value.")
         return Return(keyword, value)
+
+    def classDeclaration(self) -> Stmt:
+        name = self.consume(TokenType.IDENTIFIER, "Except class name.")
+        self.consume(TokenType.LEFT_BRACE, "Except '{' before class body.")
+
+        methods = []
+        while not self.check(TokenType.RIGHT_BRACE) and not self.isAtEnd():
+            methods.append(self.function('method'))
+
+        self.consume(TokenType.RIGHT_BRACE, "Except } after class body.")
+
+        return Class(name, methods)
