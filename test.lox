@@ -62,3 +62,21 @@ print THIS;
 
 var a = THIS();
 print a;
+
+class Bacon {
+  eat() {
+    print "Crunch crunch crunch!";
+  }
+}
+
+Bacon().eat(); // Prints "Crunch crunch crunch!".
+
+class Cls {}
+
+fun function(arg){
+  print "called function with " + arg;
+}
+
+var C = Cls();
+C.function = function;
+C.function("arg");
