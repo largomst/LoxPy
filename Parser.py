@@ -74,6 +74,9 @@ class Parser:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expr = self.finishCall(expr)  # 对可调用对象求值
+            elif self.match(TokenType.DOT):
+                name = self.consume(TokenType.IDENTIFIER, "Except property name after '.'.")
+                expr = Get(expr, name)
             else:
                 break
         return expr
@@ -198,6 +201,9 @@ class Parser:
             if isinstance(expr, Variable):
                 name = expr.name
                 return Assign(name, value)
+            elif isinstance(expr, Get):
+                get: Get = expr
+                return Set(get.object_, get.name, value)
             self.error(equals, "Invalid assignment target.")
 
         return expr

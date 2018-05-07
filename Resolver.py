@@ -19,7 +19,7 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.scopes: List[Dict[str, bool]] = []  # 为什么变量是布尔值？
         self.currentFunction = FunctionType.NONE
 
-    def resolveFunction(self, function_: Function, tpye: FunctionType):
+    def resolveFunction(self, function_: Function, type: FunctionType):
         enclosingFunction = self.currentFunction
         self.currentFunction = type
         self.beginScope()
@@ -102,6 +102,10 @@ class Resolver(ExprVisitor, StmtVisitor):
             self.resolve(argument)
         return None
 
+    def visitGetExpr(self, expr: Get):
+        self.resolve(expr.object_)
+        return None
+
     def visitGroupingExpr(self, expr: Grouping):
         self.resolve(expr.expression)
         return None
@@ -112,6 +116,11 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visitLogicalExpr(self, expr: Logical):
         self.resolve(expr.left)
         self.resolve(expr.right)
+        return None
+
+    def visitSetExpr(self, expr: Set):
+        self.resolve(expr.value)
+        self.resolve(expr.object_)
         return None
 
     def visitUnaryExpr(self, expr: Unary):

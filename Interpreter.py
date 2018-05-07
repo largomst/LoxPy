@@ -6,7 +6,7 @@ import Expr
 import Stmt
 from Environment import Environment
 from LoxCallable import LoxCallable
-from LoxClass import LoxClass
+from LoxClass import LoxClass, LoxInstance
 from LoxFunction import LoxFunction
 from Return import Return
 from Tokens import TokenType, Token
@@ -35,6 +35,16 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
             if not self.isTruthy(left): return left
 
         return self.evaluate(expr.right)
+
+    def visitSetExpr(self, expr: Expr.Set):
+        object_ = self.evaluate(expr.object_)
+
+        if not isinstance(object_, LoxInstance):
+            raise LoxRuntimeError(expr.name, "Only instance have fields.")
+
+        value = self.evaluate(expr.value)
+        object_.set(expr.name, value)
+        return value
 
     def visitUnaryExpr(self, expr: Expr.Unary):
         right = self.evaluate(expr.right)
@@ -117,6 +127,13 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
             raise LoxRuntimeError(expr.paren, f"Expected {function.arity()} arguments but got {len(arguments)} .")
 
         return function.call(self, arguments)
+
+    def visitGetExpr(self, expr: Expr.Get):
+        object_ = self.evaluate(expr.object_)
+        if isinstance(object_, LoxInstance):
+            return object_.get(expr.name)
+
+        raise LoxRuntimeError(expr.name, "Only instance have properties.")
 
     def evaluate(self, expr: Expr.Expr):
         """deliver the overriding visitor to expression#accept()"""

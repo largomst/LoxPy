@@ -14,9 +14,11 @@ def main():
         "Assign   : Token name, Expr value",
         "Binary   : Expr left, Token operator, Expr right",
         "Call     : Expr callee, Token paren, List[Expr] arguments",
+        "Get      : Expr object_, Token name",
         "Grouping : Expr expression",
         "Literal  : object value",
         "Logical  : Expr left, Token operator, Expr right",
+        "Set      : Expr object_, Token name, Expr value",
         "Unary    : Token operator, Expr right",
         "Variable : Token name"
     ])
