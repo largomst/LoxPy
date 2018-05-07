@@ -12,6 +12,7 @@ __all__ = [
     "Literal",
     "Logical",
     "Set",
+    "This",
     "Unary",
     "Variable",
 ]
@@ -32,6 +33,8 @@ class ExprVisitor:
     def visitLogicalExpr(self, expr: "Logical"): raise NotImplementedError
 
     def visitSetExpr(self, expr: "Set"): raise NotImplementedError
+
+    def visitThisExpr(self, expr: "This"): raise NotImplementedError
 
     def visitUnaryExpr(self, expr: "Unary"): raise NotImplementedError
 
@@ -123,6 +126,15 @@ class Set(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visitSetExpr(self)
+
+
+class This(Expr):
+
+    def __init__(self, keyword: Token):
+        self.keyword = keyword
+
+    def accept(self, visitor: ExprVisitor):
+        return visitor.visitThisExpr(self)
 
 
 class Unary(Expr):

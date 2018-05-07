@@ -26,3 +26,8 @@ class LoxFunction(LoxCallable):
 
     def __str__(self):
         return f"<function {self.declaration.name.lexeme} >"
+
+    def bind(self, instance: "LoxInstance"):
+        environment = Environment(self.closure)
+        environment.define('this', instance)
+        return LoxFunction(self.declaration, environment)

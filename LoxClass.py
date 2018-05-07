@@ -23,7 +23,7 @@ class LoxClass(LoxCallable):
 
     def findMethod(self, instance: "LoxInstance", name: str):
         if name in self.methods.keys():
-            return self.methods.get(name)
+            return self.methods.get(name).bind(instance)
         return None
 
 

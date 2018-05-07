@@ -14,11 +14,17 @@ class FunctionType(Enum):
     METHOD = auto()
 
 
+class ClassType(Enum):
+    NONE = auto()
+    CLASS = auto()
+
+
 class Resolver(ExprVisitor, StmtVisitor):
     def __init__(self, interpreter: Interpreter.Interpreter):
         self.interpreter = interpreter
         self.scopes: List[Dict[str, bool]] = []  # 为什么变量是布尔值？
         self.currentFunction = FunctionType.NONE
+        self.currentClass = ClassType.NONE
 
     def resolveFunction(self, function_: Function, type: FunctionType):
         enclosingFunction = self.currentFunction
@@ -41,10 +47,18 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visitClassStmt(self, stmt: Class):
         self.define(stmt.name)
 
+        enclosingClass = self.currentClass
+        self.currentClass = ClassType.CLASS
+
+        self.beginScope()
+        self.peek(self.scopes)['this'] = True
+
         for method in stmt.methods:
             declaration = FunctionType.METHOD
             self.resolveFunction(method, declaration)
 
+        self.endScope()
+        self.currentClass = enclosingClass
         return None
 
     def visitExpressionStmt(self, stmt: Expression):
@@ -126,6 +140,13 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visitSetExpr(self, expr: Set):
         self.resolve(expr.value)
         self.resolve(expr.object_)
+        return None
+
+    def visitThisExpr(self, expr: This):
+        if self.currentClass == ClassType.NONE:
+            ParseError(expr.keyword, "Cannot use 'this' outside of class.")
+
+        self.resolveLocal(expr, expr.keyword)
         return None
 
     def visitUnaryExpr(self, expr: Unary):

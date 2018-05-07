@@ -46,6 +46,9 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         object_.set(expr.name, value)
         return value
 
+    def visitThisExpr(self, expr: Expr.This):
+        return self.loopUpVariable(expr.keyword, expr)
+
     def visitUnaryExpr(self, expr: Expr.Unary):
         right = self.evaluate(expr.right)
 

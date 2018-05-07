@@ -89,6 +89,8 @@ class Parser:
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return Literal(self.previous().literal)
 
+        if self.match(TokenType.THIS): return This(self.previous())
+
         if self.match(TokenType.IDENTIFIER):
             return Variable(self.previous())
 
