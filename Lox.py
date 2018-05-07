@@ -48,6 +48,9 @@ def run(source: str):
     resolver = Resolver(interpreter)
     resolver.resolve(statements)
 
+    # stop if there was a resolution error.
+    if ErrorState.hadError: return
+
     interpreter.interpreter(statements)
 
 

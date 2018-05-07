@@ -205,7 +205,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         return a.__eq__(b)
 
     def stringify(self, obj: object):
-        if obj == None: return 'nil'
+        if obj is None: return 'nil'
 
         if isinstance(obj, float):
             text = str(obj)

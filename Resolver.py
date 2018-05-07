@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from typing import List, overload, Dict
 
 from Expr import *
@@ -7,12 +8,20 @@ import Interpreter
 from Tokens import Token
 
 
+class FunctionType(Enum):
+    NONE = auto()
+    FUNCTION = auto()
+
+
 class Resolver(ExprVisitor, StmtVisitor):
     def __init__(self, interpreter: Interpreter.Interpreter):
         self.interpreter = interpreter
         self.scopes: List[Dict[str, bool]] = []  # 为什么变量是布尔值？
+        self.currentFunction = FunctionType.NONE
 
-    def resolveFunction(self, function_: Function):
+    def resolveFunction(self, function_: Function, tpye: FunctionType):
+        enclosingFunction = self.currentFunction
+        self.currentFunction = type
         self.beginScope()
         for param in function_.parameters:
             self.declare(param)
@@ -20,6 +29,7 @@ class Resolver(ExprVisitor, StmtVisitor):
 
         self.resolve(function_.body)
         self.endScope()
+        self.currentFunction = enclosingFunction
 
     def visitBlockStmt(self, stmt: Block):
         self.beginScope()
@@ -35,7 +45,7 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.declare(stmt.name)
         self.define(stmt.name)
 
-        self.resolveFunction(stmt)
+        self.resolveFunction(stmt, FunctionType.FUNCTION)
         return None
 
     def visitIfStmt(self, stmt: If):
@@ -51,6 +61,9 @@ class Resolver(ExprVisitor, StmtVisitor):
         return None
 
     def visitReturnStmt(self, stmt: Return):
+        if self.currentFunction == FunctionType.NONE:
+            ParseError(stmt.keyword, "Cannot return from top-level code.").report()
+
         if stmt.value is not None:
             self.resolve(stmt.value)
 
@@ -102,7 +115,7 @@ class Resolver(ExprVisitor, StmtVisitor):
 
     def visitVariableExpr(self, expr: Variable):
         """if a variable is declared but not yet defined, report a error."""
-        if not self.isEmpty(self.scopes) and self.peek(self.scopes)[expr.name.lexeme] is False:
+        if not self.isEmpty(self.scopes) and self.peek(self.scopes).get(expr.name.lexeme) is False:
             ParseError(expr.name, "Cannot read local variable in its own initializer").report()
 
         self.resolveLocal(expr, expr.name)
@@ -140,7 +153,11 @@ class Resolver(ExprVisitor, StmtVisitor):
     def declare(self, name: Token):
         """make the variable as not ready yet by binding its name to false in the scope"""
         if self.isEmpty(self.scopes): return
-        scope = self.peek(self.scopes)
+        scope: Dict = self.peek(self.scopes)
+
+        if name.lexeme in scope.keys():
+            ParseError(name, "Variable with the name already declared in the scope.").report()
+
         scope[name.lexeme] = False
 
     def isEmpty(self, l: list):
