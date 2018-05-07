@@ -11,5 +11,5 @@ class LoxRuntimeError(RuntimeError):
 
 
 def runtimeError(error: LoxRuntimeError):
-    print("{}\n[line {}]".format(error.message, error.token.line))
+    print(f"[line {error.token.line}] {error.message}")
     ErrorState.hadRuntimeError = True

@@ -31,3 +31,23 @@ fun makePoint(x, y) {
 var point = makePoint(2, 3);
 print point("x"); // "2".
 print point("y"); // "3".
+
+// 动态作用域测试
+var a = "global";
+{
+  fun showA() {
+    print a;
+  }
+
+  showA();  // global
+  var a = "block";
+  showA();  // block
+}
+
+// 静态作用域测试
+var a = "outer";
+print a;
+{
+  var a = a;
+  print a;
+}
