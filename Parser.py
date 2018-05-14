@@ -156,7 +156,7 @@ class Parser:
                                     TokenType.PRINT,
                                     TokenType.RETURN]:
                 return
-        self.advance()
+            self.advance()
 
     def parse(self) -> List[Stmt]:
         statements = []
