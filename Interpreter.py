@@ -156,7 +156,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         self.environment.define(stmt.name.lexeme, None)
         methods = {}
         for method in stmt.methods:
-            function_ = LoxFunction(method, self.environment)
+            function_ = LoxFunction(method, self.environment, method.name.lexeme == 'init') # 检查方法是否为初始化函数
             methods[method.name.lexeme] = function_
 
         class_ = LoxClass(stmt.name.lexeme, methods)
@@ -177,7 +177,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         return None
 
     def visitFunctionStmt(self, stmt: Stmt.Function):
-        function_ = LoxFunction(stmt, self.environment)
+        function_ = LoxFunction(stmt, self.environment, False)
         self.environment.define(stmt.name.lexeme, function_)
         return None
 

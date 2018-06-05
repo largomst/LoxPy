@@ -12,6 +12,7 @@ class FunctionType(Enum):
     NONE = auto()
     FUNCTION = auto()
     METHOD = auto()
+    INITIALIZER = auto()
 
 
 class ClassType(Enum):
@@ -55,6 +56,8 @@ class Resolver(ExprVisitor, StmtVisitor):
 
         for method in stmt.methods:
             declaration = FunctionType.METHOD
+            if method.name.lexeme == 'init':
+                declaration = FunctionType.INITIALIZER
             self.resolveFunction(method, declaration)
 
         self.endScope()
@@ -89,7 +92,8 @@ class Resolver(ExprVisitor, StmtVisitor):
             ParseError(stmt.keyword, "Cannot return from top-level code.").report()
 
         if stmt.value is not None:
-            self.resolve(stmt.value)
+            if self.currentFunction == FunctionType.INITIALIZER:
+                ParseError(stmt.keyword, "Cannot return a value from initializer")
 
         return None
 

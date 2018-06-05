@@ -15,7 +15,12 @@ class LoxClass(LoxCallable):
         return self.name
 
     def call(self, interpreter: "Interpreter", arguments: List[object]):
+        """class 创建实例时，会查找 init 方法，如果找到，将其绑定并普通方法一样调用"""
         instance = LoxInstance(self)
+        initializer = self.methods.get('init')
+        if initializer is not None:
+            initializer.bind(instance).call(interpreter, arguments) # bind 的功能是让方法能够访问 this
+
         return instance
 
     def arity(self):
