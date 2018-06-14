@@ -185,7 +185,7 @@ class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):
         if self.isTruthy(self.evaluate(stmt.condition)):
             self.execute(stmt.thenBranch)
         elif stmt.elseBranch is not None:
-            self.execute(self.evaluate(stmt.elseBranch))
+            self.execute(stmt.elseBranch)  # fixed 语句无法求值
         return None
 
     def visitPrintStmt(self, stmt: Stmt.Print):
