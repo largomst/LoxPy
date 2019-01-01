@@ -20,7 +20,7 @@ class TokenType(Enum):
 
     EOF = auto()
 
-    # REVIEW: 这里犯了一个非常打的错误，[auto()] 产生不能区分数值的列表，导致标识符完全无法区分
+    # REVIEW: 这里犯了一个非常糟糕的错误，[auto()] 产生不能区分数值的列表，导致标识符完全无法区分
 
 
 class Token:
