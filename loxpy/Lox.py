@@ -32,9 +32,17 @@ def runFile(path: str):
 
 
 def runPrompt():
+    bang = ">"
+    lines = []
     while True:
-        run(input("> "))
-        ErrorState.hadError = False
+        lines.append(input(f"{bang} "))
+        if lines[-1].endswith("\\"):
+            lines[-1] = lines[-1].rstrip("\\")
+            bang = ":"
+        else:
+            run(" ".join(lines))
+            lines = []
+            bang = ">"
 
 
 def run(source: str):
