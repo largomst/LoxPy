@@ -1,4 +1,4 @@
-import ErrorState
+from . import ErrorState
 
 
 class ScanError(Exception):

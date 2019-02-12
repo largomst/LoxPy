@@ -1,5 +1,5 @@
-import ErrorState
-from Tokens import Token
+from . import ErrorState
+from .Tokens import Token
 
 
 class LoxRuntimeError(RuntimeError):

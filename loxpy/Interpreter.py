@@ -2,14 +2,14 @@ from typing import List
 
 import time
 
-import Expr
-import Stmt
-from Environment import Environment
-from LoxCallable import LoxCallable
-from LoxFunction import LoxFunction
-from Return import Return
-from Tokens import TokenType, Token
-from LoxRuntimeError import LoxRuntimeError, runtimeError
+from . import Expr
+from . import Stmt
+from .Environment import Environment
+from .LoxCallable import LoxCallable
+from .LoxFunction import LoxFunction
+from .Return import Return
+from .Tokens import TokenType, Token
+from .LoxRuntimeError import LoxRuntimeError, runtimeError
 
 
 class Interpreter(Expr.ExprVisitor, Stmt.StmtVisitor):

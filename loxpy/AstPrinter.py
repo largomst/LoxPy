@@ -1,7 +1,7 @@
 from typing import List
 
-from Tokens import TokenType, Token
-from Expr import *
+from .Tokens import TokenType, Token
+from .Expr import *
 
 
 class AstPrinter(ExprVisitor):

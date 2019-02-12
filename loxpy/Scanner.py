@@ -1,8 +1,8 @@
 # usr/bin env python3
 # coding: utf-8
 from typing import List
-from ScannerError import ScanError
-from Tokens import Token, TokenType
+from .ScannerError import ScanError
+from .Tokens import Token, TokenType
 
 
 class Scanner:

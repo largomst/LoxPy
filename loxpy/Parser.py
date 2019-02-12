@@ -1,9 +1,9 @@
 from typing import List
 
-from Expr import *
-from ParserError import ParseError
-from Stmt import *
-from Tokens import TokenType, Token
+from .Expr import *
+from .ParserError import ParseError
+from .Stmt import *
+from .Tokens import TokenType, Token
 
 
 class Parser:

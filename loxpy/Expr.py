@@ -1,4 +1,4 @@
-from Tokens import Token
+from .Tokens import Token
 from typing import List
 
 __all__ = [

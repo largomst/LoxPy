@@ -1,9 +1,9 @@
 from typing import List
 
-import Stmt
-from Environment import Environment
-from LoxCallable import LoxCallable
-from Return import Return
+from . import Stmt
+from .Environment import Environment
+from .LoxCallable import LoxCallable
+from .Return import Return
 
 
 class LoxFunction(LoxCallable):

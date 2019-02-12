@@ -1,8 +1,8 @@
 # usr/bin env python3
 # coding: utf-8
 
-from Tokens import Token, TokenType
-import ErrorState
+from .Tokens import Token, TokenType
+from . import ErrorState
 
 
 class ParseError(Exception):
