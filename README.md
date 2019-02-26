@@ -1,7 +1,7 @@
 # A Pyhton Implemetation of Lox
 
 This is a python implemetation of a experimental programming language Lox.
-Lox is a programming designed by Nystrom Bob, Thanks for his project [Crafting Interpreters](http://craftinginterpreters.com/)
+Lox is a programming designed by Nystrom Bob, Thanks for his project [Crafting Interpreters](http://craftinginterpreters.com/).
 
 For some reason, the project is not full implemetation of lox features.
 
