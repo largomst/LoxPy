@@ -29,6 +29,6 @@ The interpreter support:
 1. Use `pip install loxpy` to install.
 2. Use `loxpy` in termianl to run.
 
-## Grammer
+## Grammar
 
-Visit [Lox grammer](http://craftinginterpreters.com/appendix-i.html) for more infomation.
+Visit [Lox grammar](http://craftinginterpreters.com/appendix-i.html) for more infomation.
