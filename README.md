@@ -12,10 +12,11 @@ The interpreter support:
     - str
     - bool
     - number
-- express
+    - null
+- expression
     - variable and assign
     - arithmetic and logical
-- statment
+- statement
     - print
     - if
     - for and while loop
